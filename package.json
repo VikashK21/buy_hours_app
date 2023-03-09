@@ -1,0 +1,35 @@
+{
+  "name": "buy_hours_app",
+  "version": "1.0.0",
+  "description": "And this is also one of the e-commerce app.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/VikashK21/buy_hours_app.git"
+  },
+  "author": "Vikash",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VikashK21/buy_hours_app/issues"
+  },
+  "homepage": "https://github.com/VikashK21/buy_hours_app#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.20",
+    "prisma": "^4.11.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.11.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "fast-two-sms": "^3.0.0",
+    "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "morgan": "^1.10.0"
+  }
+}
