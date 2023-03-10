@@ -13,15 +13,15 @@ datasource db {
 model Users {
   id         Int          @id @default(autoincrement())
   avatar     String?
-  name       String
+  name       String?
   pro        Boolean      @default(true)
-  otp        Int          @default(0)
+  otp        Int?         @default(0)
   email      String?      @unique
   phone_num  String       @unique
-  street     String
-  address    String
-  city       String
-  zip_code   String
+  street     String?
+  address    String?
+  city       String?
+  zip_code   String?
   created_at DateTime     @default(now())
   Profession Profession[]
   Booked     Booked[]

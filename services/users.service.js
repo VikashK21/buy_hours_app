@@ -29,9 +29,9 @@ class usersModel {
         });
         console.log(createUser);
         if (createUser) {
-          const sendRes2 = await sendOTP(phone_num, otp);
+          const sendRes2 = await sendOTP([phone_num], otp);
           console.log(sendRes2);
-          if (sendRes2.return) return sendRes2;
+          if (sendRes2 && sendRes2.return) return sendRes2;
           return errMsg;
         }
         return createUser;
