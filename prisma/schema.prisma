@@ -17,6 +17,7 @@ model Users {
   pro        Boolean      @default(true)
   otp        Int?         @default(0)
   email      String?      @unique
+  verified   Boolean      @default(false)
   phone_num  String       @unique
   street     String?
   address    String?

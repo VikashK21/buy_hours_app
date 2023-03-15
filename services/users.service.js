@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 const { authenticationToken } = require("../auth/users.auth");
 const { sendOTP } = require("../messages/otp.messages");
 const crypto = require("crypto");
+const { send_OTP } = require("../messages/otp.emails");
 
 class usersModel {
   async preLogin(phone_num) {
@@ -70,6 +71,9 @@ class usersModel {
 
   async signupProvdr(id, data) {
     try {
+      if (data.hasOwnProperty("phone_num")) {
+        return "phone_num is already taken!";
+      }
       const addDetails = await prisma.users.update({
         where: { id },
         data,
@@ -82,6 +86,9 @@ class usersModel {
 
   async signupRecvr(id, data) {
     try {
+      if (data.basic.hasOwnProperty("phone_num")) {
+        return "phone_num is already taken!";
+      }
       const basicDetails = await prisma.users.update({
         where: { id },
         data: { ...data.basic, pro: false },
@@ -100,6 +107,11 @@ class usersModel {
 
   async editProvdr(id, data) {
     try {
+      const updateD = await prisma.users.update({
+        where: { id },
+        data,
+      });
+      return updateD;
     } catch (err) {
       return err.message;
     }
@@ -107,13 +119,48 @@ class usersModel {
 
   async eidtRecvr(id, data) {
     try {
+      const bringD = await prisma.users.findUnique({
+        where: { id },
+        include: {
+          Profession: true,
+        },
+      });
+      const updatePro = await prisma.users.update({
+        where: { id },
+        data: { ...data.basic },
+      });
+      console.log(bringD.Profession[0].id);
+
+      if (bringD.Profession.length > 0) {
+        const proffID = bringD.Profession[0].id;
+        const updateRec = await prisma.profession.update({
+          where: { id: proffID },
+          data: { ...data.proff },
+        });
+        return { basic: updatePro, proff: updateRec };
+      }
+      return "Details are not of profession!";
     } catch (err) {
       return err.message;
     }
   }
 
-  async preVerifyEmail(email) {
+  async preVerifyEmail(id, email) {
     try {
+      const exist = await prisma.users.findUnique({
+        where: { id },
+      });
+      console.log(exist, 'came till here');
+      const otp = crypto.randomInt(100000, 999999);
+      if ((exist && exist.email === email) || (exist && !exist.email)) {
+        send_OTP(email, otp);
+        await prisma.users.update({
+          where: { id },
+          data: { email, otp },
+        });
+        return { status: true };
+      }
+      return { status: false, msg: "Email did not match" };
     } catch (err) {
       return err.message;
     }
@@ -121,6 +168,17 @@ class usersModel {
 
   async verifyEmail(data) {
     try {
+      const bringD = await prisma.users.findUnique({
+        where: { email: data.email },
+      });
+      if (bringD && bringD.otp === Number(data.otp)) {
+        const checkoutOTP = await prisma.users.update({
+          where: { id: bringD.id },
+          data: { otp: 0, verified: true },
+        });
+        return checkoutOTP;
+      }
+      return "Email or OTP does not match!!";
     } catch (err) {
       return err.message;
     }

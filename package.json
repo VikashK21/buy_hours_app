@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "dev": "npx prisma studio"
   },
   "repository": {
     "type": "git",
@@ -27,9 +28,10 @@
     "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "fast-two-sms": "^3.0.0",
+    "fast-two-sms": "^2.0.3",
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.9.1"
   }
 }

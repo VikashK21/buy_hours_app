@@ -30,7 +30,7 @@ class usersCtrl {
       const pro = JSON.parse(req.params.provider);
       const data = req.body;
       console.log(req.user_id, "id___");
-      console.log(pro, "prov___", JSON.parse(pro)); 
+      console.log(pro, "prov___", JSON.parse(pro));
       if (pro) {
         const result = await usersModel.signupProvdr(Number(req.user_id), data);
         if (typeof result === "object") {
@@ -55,7 +55,13 @@ class usersCtrl {
 
   editProvdr = async (req, res) => {
     try {
-      res.status(200).send("It's on process");
+      const data = req.body;
+      const result = await usersModel.editProvdr(Number(req.user_id), data);
+      if (typeof result === "object") {
+        return res.status(200).json(result);
+      } else {
+        return res.status(400).json(result);
+      }
     } catch (err) {
       res.status(400).json(err.message);
     }
@@ -63,7 +69,19 @@ class usersCtrl {
 
   eidtRecvr = async (req, res) => {
     try {
-      res.status(200).send("It's on process");
+      const data = req.body;
+      console.log(req.user_id, "id___");
+      if (data.hasOwnProperty("basic") && data.hasOwnProperty("proff")) {
+        const result = await usersModel.eidtRecvr(Number(req.user_id), data);
+        if (typeof result === "object") {
+          return res.status(200).json(result);
+        }
+        return res.status(400).json(result);
+      } else {
+        return res
+          .status(400)
+          .json("Please try again with suitable crendentials type!");
+      }
     } catch (err) {
       res.status(400).json(err.message);
     }
@@ -71,7 +89,27 @@ class usersCtrl {
 
   verifyEmail = async (req, res) => {
     try {
-      res.status(200).send("It's on process");
+      const data = req.body;
+      if (data.hasOwnProperty("otp") && data.hasOwnProperty("email")) {
+        console.log("or here");
+        const result = await usersModel.verifyEmail(data);
+        if (typeof result === "object") {
+          return res.status(200).json(result);
+        } else {
+          return res.status(400).JSON(result);
+        }
+      } else if (data.hasOwnProperty("email")) {
+        console.log("is it here");
+        const result = await usersModel.preVerifyEmail(
+          Number(req.user_id),
+          data.email,
+        );
+        if (typeof result === "object") {
+          return res.status(200).json(result);
+        } else {
+          return res.status(400).json(result);
+        }
+      }
     } catch (err) {
       res.status(400).json(err.message);
     }
