@@ -150,7 +150,7 @@ class usersModel {
       const exist = await prisma.users.findUnique({
         where: { id },
       });
-      console.log(exist, 'came till here');
+      console.log(exist, "came till here");
       const otp = crypto.randomInt(100000, 999999);
       if ((exist && exist.email === email) || (exist && !exist.email)) {
         send_OTP(email, otp);
@@ -235,6 +235,68 @@ class usersModel {
         },
       });
       return allRecs;
+    } catch (err) {
+      return err.message;
+    }
+  }
+
+  async profile(id) {
+    try {
+      const profile = await prisma.users.findUnique({
+        where: { id },
+        include: {
+          Profession: true,
+          Booked: true,
+        },
+      });
+      if (!profile) {
+        return "User does not exist!";
+      }
+      if (profile && profile.Profession.length > 0) {
+        const proffID = profile.Profession[0].id;
+        const addP = await prisma.profession.findUnique({
+          where: { id: proffID },
+          include: {
+            Booked: true,
+          },
+        });
+        return { ...profile, Profession: [addP] };
+      }
+      return profile;
+    } catch (err) {
+      return err.message;
+    }
+  }
+
+  async delUser(id) {
+    try {
+      const bringD = await this.profile(id);
+      if (typeof bringD !== "object") {
+        return bringD;
+      }
+      if (bringD.Profession.length > 0) {
+        const proff = bringD.Profession[0];
+        if (proff.hasOwnProperty("Booked")) {
+          await proff.Booked.map(async (ele) => {
+            await prisma.booked.delete({
+              where: { id: ele.id },
+            });
+          });
+        }
+        await prisma.profession.delete({
+          where: { id: proff.id },
+        });
+      }
+      if (bringD.Booked.length > 0) {
+        const bookedID = bringD.Booked[0].id;
+        await prisma.booked.delete({
+          where: { id: bookedID },
+        });
+      }
+      const dUser = await prisma.users.delete({
+        where: { id },
+      });
+      return dUser;
     } catch (err) {
       return err.message;
     }

@@ -162,6 +162,27 @@ class usersCtrl {
       res.status(400).json(err.message);
     }
   };
+
+  profile = async (req, res) => {
+    try {
+      const result = await usersModel.profile(Number(req.user_id));
+      if (typeof result === "object") {
+        return res.status(200).json(result);
+      }
+      return res.status(400).json(result);
+    } catch (err) {
+      res.status(400).json(err.message);
+    }
+  };
+
+  deleteU = async (req, res) => {
+    try {
+      const result = await usersModel.delUser(Number(req.params.id));
+      res.status(200).json(result);
+    } catch (err) {
+      res.status(200).json(err.message);
+    }
+  };
 }
 
 module.exports = usersCtrl;

@@ -21,5 +21,8 @@ router.get("/users", usersCtrl.allProvdrs); // all users
 router.get("/users/:id", authorizationToken, usersCtrl.provdrById); // user by id
 router.get("/professionals", usersCtrl.allRecvrs); // all professionals
 router.get("/professionals/:id", authorizationToken, usersCtrl.recvrById); // professional by id
+router.get("/profile", authorizationToken, usersCtrl.profile);
+
+router.delete("/user/:id", usersCtrl.deleteU);
 
 module.exports = router;
